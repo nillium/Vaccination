@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import random
 from utils import MakeLabel, MakeMainWindow, MakeButton, MakeImageContainer, ImageSelector
 import BuildModel
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QHBoxLayout
@@ -35,38 +35,41 @@ def load_custom_input():
 def load_custom_filter():
 
     filters = np.zeros((filter_size, filter_size, 1, number_of_filters))
-    for s in range(0, number_of_filters):
-        custom_filter_input_image = cv2.imread('data/custom_filter_input_%d.png' % s, cv2.IMREAD_GRAYSCALE)
-        cv2.imshow('custom filter input image', custom_filter_input_image)
-        cv2.waitKey(500)
-        (w, h) = custom_filter_input_image.shape
-        print('****** FILTER INPUT IMAGE PROPS ******')
-        print('Custom Filter Input Image %d Width: ' % s + str(w))
-        print('Custom Filter Input Image %d Height: ' % s + str(h))
-        custom_filter_image = cv2.resize(custom_filter_input_image, (filter_size, filter_size), interpolation=cv2.INTER_LINEAR)
 
-        current_filter = np.zeros((filter_size, filter_size))
-        print('****** CUSTOM FILTER PROPS******')
-        print('Custom Filter Shape: ' + str(current_filter.shape))
-        custom_filter_array = np.asarray(custom_filter_image)
-        for i in range(0, filter_size):
-            for j in range(0, filter_size):
-                if 192 < custom_filter_array[i, j] <= 255:
-                    current_filter[i, j] = 1
-                elif 64 < custom_filter_array[i, j] <= 192:
-                    current_filter[i, j] = 0
-                elif 0 <= custom_filter_array[i, j] <= 64:
-                    current_filter[i, j] = -1
-        # print(current_filter)
+    for f_id in range(0, number_of_filters):
+        if random_filters == 'NO':
+            custom_filter_input_image = cv2.imread('data/custom_filter_input_%d.png' % f_id, cv2.IMREAD_GRAYSCALE)
+            # cv2.imshow('custom filter input image', custom_filter_input_image)
+            # cv2.waitKey(500)
+            (w, h) = custom_filter_input_image.shape
+            print('****** FILTER INPUT IMAGE PROPS ******')
+            print('Custom Filter Input Image %d - Width: ' % f_id + str(w))
+            print('Custom Filter Input Image %d - Height: ' % f_id + str(h))
+            custom_filter_input_image_resized = cv2.resize(custom_filter_input_image, (filter_size, filter_size), interpolation=cv2.INTER_LINEAR)
+            #current_filter = np.zeros((filter_size, filter_size))
+            print('****** CUSTOM FILTER PROPS ******')
+            custom_filter_array = np.asarray(custom_filter_input_image_resized)
+            print('Custom Filter Array Shape: ' + str(custom_filter_array.shape))
+            print('Custom Filter Array %d:' % f_id)
+            print(custom_filter_array)
+            for i in range(0, filter_size):
+                for j in range(0, filter_size):
+                    if 192 < custom_filter_array[i, j] <= 255:
+                        filters[i, j, 0, f_id] = 1
+                    elif 64 < custom_filter_array[i, j] <= 192:
+                        filters[i, j, 0, f_id] = 0
+                    elif 0 <= custom_filter_array[i, j] <= 64:
+                        filters[i, j, 0, f_id] = -1
+        if random_filters == 'YES':
+            for i in range(0, filter_size):
+                for j in range(0, filter_size):
+                    random.choice([-1, 0 ,1])
+                    filters[i, j, 0, f_id] = random.choice([-1, 0 ,1])
+        print('Custom Filter in Filters Array')
+        print(filters[:, :, 0, f_id])
         print('******')
-        # print('custom_filter_%d.png' % s)
-        cv2.imshow('current filter', current_filter)
-        cv2.waitKey(500)
-        filters[:, :, 0, s] = current_filter
-        cv2.imwrite('custom_filter_%d.png' % s, current_filter)
-        print(s)
-    #print(filters.shape)
-    np.save("data/custom_filter.npy", filters)
+    np.save("data/filters.npy", filters)
+
 load_custom_filter()
 
 # LAYOUTS

@@ -10,7 +10,8 @@ sample_h = 64
 app_w = 1000
 app_h = 590
 
-#AI Parameters
-epochs=10
+#AI PARAMETERS
+epochs=3
+random_filters = 'YES' # YES for custom filters 'NO' for randomly generated filters.
 number_of_filters = 4
-filter_size = 16
+filter_size = 16 # Edge length of square filters.

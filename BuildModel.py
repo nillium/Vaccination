@@ -27,7 +27,7 @@ def build_model():
     print("y-test Shape: " + str(y_test.shape))
 
     def initialize_kernel(shape, dtype=None):
-        filters = np.load('data/custom_filter.npy')
+        filters = np.load('data/filters.npy')
         return filters
 
     # Build the model
